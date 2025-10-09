@@ -9,4 +9,6 @@ void print_ifaddr_info(struct ifaddrs* address, uint8_t index);
 
 void print_inet_interfaces(struct ifaddrs* addresses);
 
+struct ifaddrs* get_inet_ifaddr_by_index(struct ifaddrs* addresses, uint8_t req_index);
+
 #endif
