@@ -22,7 +22,7 @@ int ipv4_convert_str_to_bytes(char* str, int len, char* bytes)
             if (new_buf > 255)
                 return -1;
                 
-            buf = (char) new_buf;
+            buf += (char) new_buf;
             --j;
         }
         
