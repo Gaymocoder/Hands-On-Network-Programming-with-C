@@ -1,6 +1,10 @@
 #include "network.h"
+#include "ipv4_convert.h"
+
+#include <netdb.h>
 
 #include <stdio.h>
+#include <string.h>
 
 int main(int argc, char** argv)
 {
@@ -25,6 +29,24 @@ int main(int argc, char** argv)
         return 2;
     }
     
-    printf("\nChosen interface:\n");
-    print_ifaddr_info(chosen_ifaddr, chosen_inet_ifaddr_num);
+    int chosen_ifaddr_family = chosen_ifaddr->ifa_addr->sa_family;
+    if (chosen_ifaddr_family == AF_INET6)
+    {
+        fprintf(stderr, "\nError\nmain.c:19 — Can't work with IPv6 yet\n");
+        return 3;
+    }
+    
+    char ipv4_str[50];
+    const int family_struct_size = sizeof(struct sockaddr_in); // (chosen_ifaddr_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
+    getnameinfo(chosen_ifaddr->ifa_addr, family_struct_size, ipv4_str, sizeof(ipv4_str), 0, 0, NI_NUMERICHOST);
+    
+    char ipv4_bytes[4];
+    if (ipv4_convert_str_to_bytes(ipv4_str, strlen(ipv4_str), ipv4_bytes))
+    {
+        fprintf(stderr, "\nError\nmain.c:43 — ipv4_convert_str_to_bytes() returned -1\n");
+        return 4;
+    }
+    
+    printf("Chosen IPv4: %s\n", ipv4_str);
+    printf("Chosen IPv4 (from bytes): %hhu.%hhu.%hhu.%hhu\n", ipv4_bytes[0], ipv4_bytes[1], ipv4_bytes[2], ipv4_bytes[3]);
 }
