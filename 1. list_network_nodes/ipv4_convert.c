@@ -3,8 +3,8 @@
 #include <math.h>
 #include <stdint.h>
 
-int ipv4_convert_str_to_bytes(char* str, int len, char* bytes)
-{
+int ipv4_convert_str_to_bytes(char* str, int len, char (*bytes)[4])
+{    
     char buf = 0;
     uint8_t byte_index = 0;
     for(int i = 0; i <= len; ++i)
@@ -26,7 +26,7 @@ int ipv4_convert_str_to_bytes(char* str, int len, char* bytes)
             --j;
         }
         
-        bytes[byte_index] = buf;
+        *bytes[byte_index] = buf;
         ++byte_index;
         buf = 0;
     }

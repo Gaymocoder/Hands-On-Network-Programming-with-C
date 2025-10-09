@@ -41,7 +41,7 @@ int main(int argc, char** argv)
     getnameinfo(chosen_ifaddr->ifa_addr, family_struct_size, ipv4_str, sizeof(ipv4_str), 0, 0, NI_NUMERICHOST);
     
     char ipv4_bytes[4];
-    if (ipv4_convert_str_to_bytes(ipv4_str, strlen(ipv4_str), ipv4_bytes))
+    if (ipv4_convert_str_to_bytes(ipv4_str, strlen(ipv4_str), &ipv4_bytes))
     {
         fprintf(stderr, "\nError\nmain.c:43 — ipv4_convert_str_to_bytes() returned -1\n");
         return 4;

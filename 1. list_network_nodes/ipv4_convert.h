@@ -3,6 +3,6 @@
 
 #include <ifaddrs.h>
 
-int ipv4_convert_str_to_bytes(char* str, int len, char* bytes);
+int ipv4_convert_str_to_bytes(char* str, int len, char (*bytes)[4]);
 
 #endif
