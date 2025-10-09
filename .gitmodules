@@ -1,0 +1,3 @@
+[submodule "3rdparty/C-CPP-Experiments"]
+	path = 3rdparty/C-CPP-Experiments
+	url = https://github.com/Gaymocoder/C-CPP-Experiments

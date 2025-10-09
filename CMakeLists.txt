@@ -7,4 +7,8 @@ set(CMAKE_CXX_STANDART 17)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/../bin)
 
+option(ALL_ON "Build all" OFF)
+option(C_TOBITS "Build 'C. ToBits'-exp" ON)
+add_subdirectory("3rdparty/C-CPP-Experiments")
+
 add_subdirectory("1. list_network_nodes")
