@@ -31,5 +31,8 @@ int ipv4_convert_str_to_bytes(char* str, int len, char* bytes)
         buf = 0;
     }
     
+    if (byte_index != 4)
+        return -1;
+    
     return 0;
 }
