@@ -1,5 +1,6 @@
 #include "network.h"
 #include "ipv4_convert.h"
+#include "bits.h"
 
 #include <netdb.h>
 
@@ -39,6 +40,7 @@ int main(int argc, char** argv)
     char ipv4_str[50];
     const int family_struct_size = sizeof(struct sockaddr_in); // (chosen_ifaddr_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
     getnameinfo(chosen_ifaddr->ifa_addr, family_struct_size, ipv4_str, sizeof(ipv4_str), 0, 0, NI_NUMERICHOST);
+    printf("Chosen IPv4: %s\n", ipv4_str);
     
     char ipv4_bytes[4];
     if (ipv4_convert_str_to_bytes(ipv4_str, strlen(ipv4_str), &ipv4_bytes))
@@ -46,7 +48,11 @@ int main(int argc, char** argv)
         fprintf(stderr, "\nError\nmain.c:43 — ipv4_convert_str_to_bytes() returned -1\n");
         return 4;
     }
-    
-    printf("Chosen IPv4: %s\n", ipv4_str);
     printf("Chosen IPv4 (from bytes): %hhu.%hhu.%hhu.%hhu\n", ipv4_bytes[0], ipv4_bytes[1], ipv4_bytes[2], ipv4_bytes[3]);
+    
+    uint32_t ipv4_uint = ipv4_convert_bytes_to_uint(&ipv4_bytes);
+    printf("Chosen IPv4 (from uint): %u\n", ipv4_uint);
+    
+    printf("Chosen IPv4 as bits:\n");
+    printBits(&ipv4_uint, sizeof(ipv4_uint));
 }
