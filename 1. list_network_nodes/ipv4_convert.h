@@ -11,4 +11,6 @@ uint32_t ipv4_convert_bytes_to_uint(char (*ip_bytes)[4]);
 
 int ipv4_convert_uint_to_str(uint32_t ip_uint, char* str, int len);
 
+int ipv4_convert_str_to_uint(char* str, int len, uint32_t* ip_uint);
+
 #endif

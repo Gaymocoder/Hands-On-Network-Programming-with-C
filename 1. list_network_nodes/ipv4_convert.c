@@ -88,3 +88,14 @@ int ipv4_convert_uint_to_str(uint32_t ip_uint, char* str, int len)
     strncpy(str, str_buf, len);
     return 0;
 }
+
+int ipv4_convert_str_to_uint(char* str, int len, uint32_t* ip_uint)
+{
+    char bytes[4];
+    int error_convert_to_bytes = ipv4_convert_str_to_bytes(str, len, &bytes);
+    if (error_convert_to_bytes)
+        return error_convert_to_bytes;
+    
+    *ip_uint = ipv4_convert_bytes_to_uint(&bytes);
+    return 0;
+}
