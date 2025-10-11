@@ -30,6 +30,9 @@ void print_inet_interfaces(struct ifaddrs* addresses)
     uint8_t index = 1;
     for(struct ifaddrs* address = addresses; address != NULL; address = address->ifa_next)
     {
+        if (!address->ifa_addr)
+            continue;
+            
         int addr_family = address->ifa_addr->sa_family;
         if (addr_family != AF_INET && addr_family != AF_INET6)
             continue;
@@ -44,6 +47,9 @@ struct ifaddrs* get_inet_ifaddr_by_index(struct ifaddrs* addresses, uint8_t req_
     uint8_t cur_index = 1;
     for(struct ifaddrs* address = addresses; address != NULL; address = address->ifa_next)
     {
+        if (!address->ifa_addr)
+            continue;
+            
         int addr_family = address->ifa_addr->sa_family;
         if (addr_family != AF_INET && addr_family != AF_INET6)
             continue;
