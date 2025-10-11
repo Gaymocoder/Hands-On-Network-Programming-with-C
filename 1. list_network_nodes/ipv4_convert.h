@@ -5,6 +5,8 @@
 
 #include <stdint.h>
 
+void set_ptr_for_iter(char** ptr, int* incr, int size);
+
 int ipv4_convert_str_to_bytes(char* str, int len, char (*bytes)[4]);
 
 uint32_t ipv4_convert_bytes_to_uint(char (*ip_bytes)[4]);

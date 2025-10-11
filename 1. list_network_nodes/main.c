@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     print_inet_interfaces(addresses);
     
     uint8_t chosen_inet_ifaddr_num = 0;
-    printf("Choose the interface from printed (number): ");
+    printf("\nChoose the interface from printed (number): ");
     scanf("%hhu", &chosen_inet_ifaddr_num);
     
     struct ifaddrs* chosen_ifaddr = get_inet_ifaddr_by_index(addresses, chosen_inet_ifaddr_num);

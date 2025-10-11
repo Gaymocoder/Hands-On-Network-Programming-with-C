@@ -5,6 +5,19 @@
 #include <stdio.h>
 #include <string.h>
 
+void set_ptr_for_iter(char** ptr, int* incr, int size)
+{
+    if (GCS_LITTLE_ENDIAN)
+    {
+        *ptr = *ptr + size - 1;
+        *incr = -1;
+    }
+    else
+    {
+        *incr = 1;
+    }
+}
+
 int ipv4_convert_str_to_bytes(char* str, int len, char (*bytes)[4])
 {    
     char buf = 0;
@@ -42,18 +55,10 @@ int ipv4_convert_str_to_bytes(char* str, int len, char (*bytes)[4])
 uint32_t ipv4_convert_bytes_to_uint(char (*ip_bytes)[4])
 {
     uint32_t _return = 0;
-    char* ptr;
+    
     int incr;
-    if (GCS_LITTLE_ENDIAN)
-    {
-        ptr = ((char*) &_return) + 3;
-        incr = -1;
-    }
-    else
-    {
-        ptr = ((char*) &_return);
-        incr = 1;
-    }
+    char* ptr = (char*) &_return;
+    set_ptr_for_iter(&ptr, &incr, sizeof(_return));
     
     for(int i = 0; i < 4; ++i)
     {
@@ -66,21 +71,11 @@ uint32_t ipv4_convert_bytes_to_uint(char (*ip_bytes)[4])
 
 int ipv4_convert_uint_to_str(uint32_t ip_uint, char* str, int len)
 {
-    char* byte_ptr;
-    char str_buf[16];
-    
     int incr;
-    if (GCS_LITTLE_ENDIAN)
-    {
-        byte_ptr = ((char*) &ip_uint) + 3;
-        incr = -1;
-    }
-    else
-    {
-        byte_ptr = (char*) &ip_uint;
-        incr = 1;
-    }
-    
+    char* byte_ptr = (char*) &ip_uint;
+    set_ptr_for_iter(&byte_ptr, &incr, sizeof(ip_uint));
+ 
+    char str_buf[16];
     sprintf(str_buf, "%hhu.%hhu.%hhu.%hhu", byte_ptr[0], byte_ptr[incr], byte_ptr[incr*2], byte_ptr[incr*3]);
     if (strlen(str_buf) > len-1)
         return -1;
