@@ -37,13 +37,13 @@ int main(int argc, char** argv)
         return 3;
     }
     
-    char ipv4_str[50];
+    char ipv4_strbuf[50];
     const int family_struct_size = sizeof(struct sockaddr_in); // (chosen_ifaddr_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
-    getnameinfo(chosen_ifaddr->ifa_addr, family_struct_size, ipv4_str, sizeof(ipv4_str), 0, 0, NI_NUMERICHOST);
-    printf("Chosen IPv4: %s\n", ipv4_str);
+    getnameinfo(chosen_ifaddr->ifa_addr, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
+    printf("Chosen IPv4: %s\n", ipv4_strbuf);
     
     uint32_t ipv4_uint = 0;
-    if (ipv4_convert_str_to_uint(ipv4_str, strlen(ipv4_str), &ipv4_uint))
+    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_uint))
     {
         fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_str_to_int() recieved an str with incorrect IPv4 format\n");
         return 4;
@@ -53,6 +53,21 @@ int main(int argc, char** argv)
     printf("Chosen IPv4 as bits:\n");
     printBits(&ipv4_uint, sizeof(ipv4_uint));
     
+    getnameinfo(chosen_ifaddr->ifa_netmask, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
+    uint32_t ipv4_mask_uint = 0;
+    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_mask_uint))
+    {
+        fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_str_to_int() recieved an str with incorrect IPv4 format\n");
+        return 5;
+    }
+    
+    if (ipv4_convert_uint_to_str(ipv4_uint | (~ipv4_mask_uint), ipv4_strbuf, sizeof(ipv4_strbuf)))
+    {
+        fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_uint_to_str() recieved an incorrect length\n");
+        return 6;
+    }
+    
+    printf("IPv4 broadcast: %s\n", ipv4_strbuf);
     freeifaddrs(addresses);
     return 0;
 }
