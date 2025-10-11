@@ -64,5 +64,7 @@ int main(int argc, char** argv)
     }
     
     printf("Chosen IPv4 (from uint to str): %s\n", ipv4_str_new);
+    
+    freeifaddrs(addresses);
     return 0;
 }
