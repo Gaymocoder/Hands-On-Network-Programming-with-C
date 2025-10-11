@@ -55,4 +55,14 @@ int main(int argc, char** argv)
     
     printf("Chosen IPv4 as bits:\n");
     printBits(&ipv4_uint, sizeof(ipv4_uint));
+    
+    char ipv4_str_new[16];
+    if (ipv4_convert_uint_to_str(ipv4_uint, ipv4_str_new, sizeof(ipv4_str_new)))
+    {
+        fprintf(stderr, "\nError\nmain.c:60 — ipv4_convert_uint_to_str() return -1\n");
+        return 5;
+    }
+    
+    printf("Chosen IPv4 (from uint to str): %s\n", ipv4_str_new);
+    return 0;
 }
