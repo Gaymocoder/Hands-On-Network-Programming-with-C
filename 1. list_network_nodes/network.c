@@ -1,9 +1,11 @@
 #include "network.h"
+#include "ipv4_convert.h"
 
 #include <netdb.h>
 #include <sys/socket.h>
 
 #include <stdio.h>
+#include <string.h>
 
 // Printing info for single INET address interface
 void print_ifaddr_info(struct ifaddrs* address, uint8_t index)
@@ -61,4 +63,29 @@ struct ifaddrs* get_inet_ifaddr_by_index(struct ifaddrs* addresses, uint8_t req_
     }
     
     return NULL;
+}
+
+int get_ipv4_broadcast_uint(struct ifaddrs* address, uint32_t* ipv4_uint)
+{
+    if (!address->ifa_addr)
+        return 1;
+    
+    int addr_family = address->ifa_addr->sa_family;
+    if (addr_family != AF_INET)
+        return 2;
+        
+    char ipv4_strbuf[50];
+    uint32_t ipv4_address, ipv4_mask;
+    const int family_struct_size = sizeof(struct sockaddr_in);
+    
+    getnameinfo(address->ifa_addr, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
+    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_address))
+        return 3;
+        
+    getnameinfo(address->ifa_netmask, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
+    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_mask))
+        return 4;
+        
+    *ipv4_uint = ipv4_address | (~ipv4_mask);
+    return 0;
 }

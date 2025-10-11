@@ -9,6 +9,7 @@
 
 int main(int argc, char** argv)
 {
+    int error_code = 0;
     struct ifaddrs* addresses;
     if (getifaddrs(&addresses))
     {
@@ -37,34 +38,20 @@ int main(int argc, char** argv)
         return 3;
     }
     
-    char ipv4_strbuf[50];
-    const int family_struct_size = sizeof(struct sockaddr_in); // (chosen_ifaddr_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
-    getnameinfo(chosen_ifaddr->ifa_addr, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
-    printf("Chosen IPv4: %s\n", ipv4_strbuf);
-    
-    uint32_t ipv4_uint = 0;
-    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_uint))
+    uint32_t ipv4_broadcast = 0;
+    error_code = get_ipv4_broadcast_uint(chosen_ifaddr, &ipv4_broadcast);
+    if (error_code)
     {
-        fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_str_to_int() recieved an str with incorrect IPv4 format\n");
+        fprintf(stderr, "\nError\nmain.c:41 — Failed to calculate broadcast IPv4 of chosen interface (return_code: %i)\n", error_code);
         return 4;
     }
     
-    printf("Chosen IPv4 as uint: %u\n", ipv4_uint);
-    printf("Chosen IPv4 as bits:\n");
-    printBits(&ipv4_uint, sizeof(ipv4_uint));
-    
-    getnameinfo(chosen_ifaddr->ifa_netmask, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
-    uint32_t ipv4_mask_uint = 0;
-    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_mask_uint))
-    {
-        fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_str_to_int() recieved an str with incorrect IPv4 format\n");
-        return 5;
-    }
-    
-    if (ipv4_convert_uint_to_str(ipv4_uint | (~ipv4_mask_uint), ipv4_strbuf, sizeof(ipv4_strbuf)))
+    char ipv4_strbuf[50];
+    error_code = ipv4_convert_uint_to_str(ipv4_broadcast, ipv4_strbuf, sizeof(ipv4_strbuf));
+    if (error_code)
     {
         fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_uint_to_str() recieved an incorrect length\n");
-        return 6;
+        return 5;
     }
     
     printf("IPv4 broadcast: %s\n", ipv4_strbuf);
