@@ -2,6 +2,8 @@
 #include "endianness.h"
 
 #include <math.h>
+#include <stdio.h>
+#include <string.h>
 
 int ipv4_convert_str_to_bytes(char* str, int len, char (*bytes)[4])
 {    
@@ -60,4 +62,29 @@ uint32_t ipv4_convert_bytes_to_uint(char (*ip_bytes)[4])
     }
     
     return _return;
+}
+
+int ipv4_convert_uint_to_str(uint32_t ip_uint, char* str, int len)
+{
+    char* byte_ptr;
+    char str_buf[16];
+    
+    int incr;
+    if (GCS_LITTLE_ENDIAN)
+    {
+        byte_ptr = ((char*) &ip_uint) + 3;
+        incr = -1;
+    }
+    else
+    {
+        byte_ptr = (char*) &ip_uint;
+        incr = 1;
+    }
+    
+    sprintf(str_buf, "%hhu.%hhu.%hhu.%hhu", byte_ptr[0], byte_ptr[incr], byte_ptr[incr*2], byte_ptr[incr*3]);
+    if (strlen(str_buf) > len-1)
+        return -1;
+        
+    strncpy(str, str_buf, len);
+    return 0;
 }
