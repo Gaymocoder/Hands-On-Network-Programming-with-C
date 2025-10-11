@@ -10,9 +10,9 @@
 int main(int argc, char** argv)
 {
     struct ifaddrs* addresses;
-    if (getifaddrs(&addresses) == -1)
+    if (getifaddrs(&addresses))
     {
-        fprintf(stderr, "\nError\nmain.c:12 — getifaddrs() returned -1\n");
+        fprintf(stderr, "\nError\nmain.c:12 — getifaddrs() couldn't recieve interface addresses\n");
         return 1;
     }
     
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     struct ifaddrs* chosen_ifaddr = get_inet_ifaddr_by_index(addresses, chosen_inet_ifaddr_num);
     if (!chosen_ifaddr)
     {
-        fprintf(stderr, "\nError\nmain.c:21 — get_inet_ifaddr_by_index() returned NULL\n");
+        fprintf(stderr, "\nError\nmain.c:21 — get_inet_ifaddr_by_index() couldn't find an interface with requested index\n");
         return 2;
     }
     
@@ -42,28 +42,16 @@ int main(int argc, char** argv)
     getnameinfo(chosen_ifaddr->ifa_addr, family_struct_size, ipv4_str, sizeof(ipv4_str), 0, 0, NI_NUMERICHOST);
     printf("Chosen IPv4: %s\n", ipv4_str);
     
-    char ipv4_bytes[4];
-    if (ipv4_convert_str_to_bytes(ipv4_str, strlen(ipv4_str), &ipv4_bytes))
+    uint32_t ipv4_uint = 0;
+    if (ipv4_convert_str_to_uint(ipv4_str, strlen(ipv4_str), &ipv4_uint))
     {
-        fprintf(stderr, "\nError\nmain.c:43 — ipv4_convert_str_to_bytes() returned -1\n");
+        fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_str_to_int() recieved an str with incorrect IPv4 format\n");
         return 4;
     }
-    printf("Chosen IPv4 (from bytes): %hhu.%hhu.%hhu.%hhu\n", ipv4_bytes[0], ipv4_bytes[1], ipv4_bytes[2], ipv4_bytes[3]);
     
-    uint32_t ipv4_uint = ipv4_convert_bytes_to_uint(&ipv4_bytes);
-    printf("Chosen IPv4 (from uint): %u\n", ipv4_uint);
-    
+    printf("Chosen IPv4 as uint: %u\n", ipv4_uint);
     printf("Chosen IPv4 as bits:\n");
     printBits(&ipv4_uint, sizeof(ipv4_uint));
-    
-    char ipv4_str_new[16];
-    if (ipv4_convert_uint_to_str(ipv4_uint, ipv4_str_new, sizeof(ipv4_str_new)))
-    {
-        fprintf(stderr, "\nError\nmain.c:60 — ipv4_convert_uint_to_str() return -1\n");
-        return 5;
-    }
-    
-    printf("Chosen IPv4 (from uint to str): %s\n", ipv4_str_new);
     
     freeifaddrs(addresses);
     return 0;
