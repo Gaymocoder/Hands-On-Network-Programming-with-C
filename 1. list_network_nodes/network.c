@@ -67,7 +67,7 @@ struct ifaddrs* get_inet_ifaddr_by_index(struct ifaddrs* addresses, uint8_t req_
     return NULL;
 }
 
-int get_ip_broadcast(struct ifaddrs* address, void* bc_ip_addr)
+int get_netbin_ip_broadcast(struct ifaddrs* address, void* bc_ip_addr)
 {
     if (!address->ifa_addr)
         return 1;
@@ -94,7 +94,7 @@ int get_ip_broadcast(struct ifaddrs* address, void* bc_ip_addr)
         struct in_addr* ipv4_addr = (struct in_addr*) ip_addr;
         struct in_addr* ipv4_mask = (struct in_addr*) ip_mask;
         struct in_addr* bc_ipv4_addr = (struct in_addr*) bc_ip_addr;
-        bc_ipv4_addr->s_addr = ntohl(ipv4_addr->s_addr) | ~ntohl(ipv4_mask->s_addr);
+        bc_ipv4_addr->s_addr = ipv4_addr->s_addr | ~ipv4_mask->s_addr;
     }
     else
     {

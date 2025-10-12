@@ -15,6 +15,6 @@ void print_inet_interfaces(struct ifaddrs* addresses);
 
 struct ifaddrs* get_inet_ifaddr_by_index(struct ifaddrs* addresses, uint8_t req_index);
 
-int get_ip_broadcast(struct ifaddrs* address, void* bc_ip_addr);
+int get_netbin_ip_broadcast(struct ifaddrs* address, void* bc_ip_addr);
 
 #endif
