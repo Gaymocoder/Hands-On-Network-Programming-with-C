@@ -38,8 +38,8 @@ int main(int argc, char** argv)
         return 3;
     }
     
-    uint32_t ipv4_broadcast = 0;
-    error_code = get_ipv4_broadcast_uint(chosen_ifaddr, &ipv4_broadcast);
+    char broadcast_ip_address[MAX_INADDR_STRUCT_SIZE];
+    error_code = get_ip_broadcast(chosen_ifaddr, broadcast_ip_address);
     if (error_code)
     {
         fprintf(stderr, "\nError\nmain.c:41 — Failed to calculate broadcast IPv4 of chosen interface (return_code: %i)\n", error_code);
@@ -47,7 +47,7 @@ int main(int argc, char** argv)
     }
     
     char ipv4_strbuf[50];
-    error_code = ipv4_convert_uint_to_str(ipv4_broadcast, ipv4_strbuf, sizeof(ipv4_strbuf));
+    error_code = ipv4_convert_uint_to_str(((struct in_addr*) broadcast_ip_address)->s_addr, ipv4_strbuf, sizeof(ipv4_strbuf));
     if (error_code)
     {
         fprintf(stderr, "\nError\nmain.c:46 — ipv4_convert_uint_to_str() recieved an incorrect length\n");
