@@ -2,6 +2,7 @@
 #include "ipv4_convert.h"
 
 #include <netdb.h>
+#include <arpa/inet.h>
 #include <sys/socket.h>
 
 #include <stdio.h>
@@ -75,17 +76,17 @@ int get_ipv4_broadcast_uint(struct ifaddrs* address, uint32_t* ipv4_uint)
         return 2;
         
     char ipv4_strbuf[50];
-    uint32_t ipv4_address, ipv4_mask;
+    struct in_addr ipv4_addr, ipv4_mask;
     const int family_struct_size = sizeof(struct sockaddr_in);
     
     getnameinfo(address->ifa_addr, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
-    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_address))
+    if (inet_pton(AF_INET, ipv4_strbuf, &ipv4_addr) != 1)
         return 3;
         
     getnameinfo(address->ifa_netmask, family_struct_size, ipv4_strbuf, sizeof(ipv4_strbuf), 0, 0, NI_NUMERICHOST);
-    if (ipv4_convert_str_to_uint(ipv4_strbuf, strlen(ipv4_strbuf), &ipv4_mask))
+    if (inet_pton(AF_INET, ipv4_strbuf, &ipv4_mask) != 1)
         return 4;
         
-    *ipv4_uint = ipv4_address | (~ipv4_mask);
+    *ipv4_uint = ntohl(ipv4_addr.s_addr) | ~ntohl(ipv4_mask.s_addr);
     return 0;
 }
