@@ -31,18 +31,12 @@ int main(int argc, char** argv)
         return 2;
     }
     
-    int chosen_ifaddr_family = chosen_ifaddr->ifa_addr->sa_family;
-    if (chosen_ifaddr_family == AF_INET6)
-    {
-        fprintf(stderr, "\nError\nmain.c:19 — Can't work with IPv6 yet\n");
-        return 3;
-    }
-    
     char broadcast_ip_address[MAX_INADDR_STRUCT_SIZE];
+    int chosen_ifaddr_family = chosen_ifaddr->ifa_addr->sa_family;
     error_code = get_netbin_ip_broadcast(chosen_ifaddr, broadcast_ip_address);
     if (error_code)
     {
-        fprintf(stderr, "\nError\nmain.c:41 — Failed to calculate broadcast IPv4 of chosen interface (return_code: %i)\n", error_code);
+        fprintf(stderr, "\nError\nmain.c:41 — Failed to calculate broadcast IP of chosen interface (return_code: %i)\n", error_code);
         return 4;
     }
     
@@ -53,7 +47,7 @@ int main(int argc, char** argv)
         return 5;
     }
     
-    printf("IPv4 broadcast: %s\n", ip_strbuf);
+    printf("IP broadcast: %s\n", ip_strbuf);
     freeifaddrs(addresses);
     return 0;
 }

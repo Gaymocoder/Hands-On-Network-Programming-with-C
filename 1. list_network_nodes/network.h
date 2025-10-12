@@ -9,6 +9,8 @@
 
 extern const uint16_t MAX_INADDR_STRUCT_SIZE;
 
+void clear_ipv6_iface_str(char* str, int len);
+
 void print_ifaddr_info(struct ifaddrs* address, uint8_t index);
 
 void print_inet_interfaces(struct ifaddrs* addresses);

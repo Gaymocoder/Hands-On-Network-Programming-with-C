@@ -9,6 +9,15 @@
 
 const uint16_t MAX_INADDR_STRUCT_SIZE = (uint16_t) fmax((double) sizeof(struct in_addr), (double) sizeof(struct in6_addr));
 
+void clear_ipv6_iface_str(char* str, int len)
+{
+    char* iface_ptr = strstr(str, "%");
+    if (!iface_ptr)
+        return;
+        
+    memset(iface_ptr, 0, len - (iface_ptr - str));
+}
+
 // Printing info for single INET address interface
 void print_ifaddr_info(struct ifaddrs* address, uint8_t index)
 {
@@ -77,12 +86,14 @@ int get_netbin_ip_broadcast(struct ifaddrs* address, void* bc_ip_addr)
         return 2;
         
     char ip_strbuf[50];
-    const int family_struct_size = sizeof(struct sockaddr_in);
+    const int family_struct_size = (addr_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
     char ip_addr[MAX_INADDR_STRUCT_SIZE],
          ip_mask[MAX_INADDR_STRUCT_SIZE];
     
     getnameinfo(address->ifa_addr, family_struct_size, ip_strbuf, sizeof(ip_strbuf), 0, 0, NI_NUMERICHOST);
-    if (inet_pton(addr_family, ip_strbuf, ip_addr) != 1)
+    clear_ipv6_iface_str(ip_strbuf, strlen(ip_strbuf));
+    int error_code = inet_pton(addr_family, ip_strbuf, ip_addr);
+    if (error_code != 1)
         return 3;
         
     getnameinfo(address->ifa_netmask, family_struct_size, ip_strbuf, sizeof(ip_strbuf), 0, 0, NI_NUMERICHOST);
