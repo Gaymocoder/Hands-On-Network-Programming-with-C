@@ -7,6 +7,13 @@
 #include <math.h>
 #include <stdint.h>
 
+struct if_all_addrs
+{
+    struct ifaddrs* mac;
+    struct ifaddrs* inet;
+    struct ifaddrs* inet6;
+};
+
 extern const uint16_t MAX_INADDR_STRUCT_SIZE;
 
 void clear_ipv6_iface_str(char* str, int len);
