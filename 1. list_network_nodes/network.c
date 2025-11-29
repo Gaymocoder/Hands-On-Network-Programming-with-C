@@ -3,6 +3,10 @@
 #include <netdb.h>
 #include <sys/socket.h>
 
+#include <ifaddrs.h>
+#include <netpacket/packet.h>
+#include <netinet/ether.h>
+
 #include <stdio.h>
 #include <string.h>
 
@@ -21,7 +25,6 @@ void clear_ipv6_iface_str(char* str, int len)
 void print_ifaddr_info(struct ifaddrs* address, uint8_t index)
 {
     int addr_family = address->ifa_addr->sa_family;
-    
     printf("Interface #%u:\n", index);
     printf("    family:\t%s\n", (addr_family == AF_INET) ? "IPv4" : "IPv6");
     printf("    name:\t%s\n", address->ifa_name);
@@ -73,6 +76,27 @@ struct ifaddrs* get_inet_ifaddr_by_index(struct ifaddrs* addresses, uint8_t req_
     }
     
     return NULL;
+}
+
+void get_if_all_addrs(struct ifaddrs* addresses, const char* if_name, struct if_all_addrs* out)
+{
+    memset(out, 0, sizeof(struct if_all_addrs));
+    strncpy(out->addr_name, if_name, sizeof(out->addr_name));
+    for(struct ifaddrs* address = addresses; address != NULL; address = address->ifa_next)
+    {
+        if (!address->ifa_addr)
+            continue;
+            
+        if (!strcmp(if_name, address->ifa_name))
+        {
+            if (address->ifa_addr->sa_family == AF_INET)
+                out->addr_inet = address;
+            else if (address->ifa_addr->sa_family == AF_INET6)
+                out->addr_inet6 = address;
+            else if (address->ifa_addr->sa_family == AF_PACKET)
+                out->addr_packet = address;
+        }
+    }
 }
 
 int get_netbin_ip_broadcast(struct ifaddrs* address, void* bc_ip_addr)

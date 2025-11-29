@@ -9,10 +9,13 @@
 
 struct if_all_addrs
 {
-    struct ifaddrs* mac;
-    struct ifaddrs* inet;
-    struct ifaddrs* inet6;
+    char addr_name[64];
+    struct ifaddrs* addr_packet;
+    struct ifaddrs* addr_inet;
+    struct ifaddrs* addr_inet6;
 };
+
+void get_if_all_addrs(struct ifaddrs* addresses, const char* if_name, struct if_all_addrs* out);
 
 extern const uint16_t MAX_INADDR_STRUCT_SIZE;
 
