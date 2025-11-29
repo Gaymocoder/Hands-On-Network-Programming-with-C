@@ -46,6 +46,13 @@ int main(int argc, char** argv)
         return 5;
     }
     
+    struct if_all_addrs all_addrs;
+    get_if_all_addrs(addresses, chosen_ifaddr->ifa_name, &all_addrs);
+    printf("\nAll addresses of chosen interface:\n");
+    print_ifaddr_info(all_addrs.addr_packet, 1);
+    print_ifaddr_info(all_addrs.addr_inet, 2);
+    print_ifaddr_info(all_addrs.addr_inet6, 3);
+    
     printf("IP broadcast: %s\n", ip_strbuf);
     freeifaddrs(addresses);
     return 0;

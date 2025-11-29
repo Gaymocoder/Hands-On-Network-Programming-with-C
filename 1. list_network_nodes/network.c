@@ -24,12 +24,27 @@ void clear_ipv6_iface_str(char* str, int len)
 // Printing info for single INET address interface
 void print_ifaddr_info(struct ifaddrs* address, uint8_t index)
 {
+    if (!address)
+    {
+        printf("Interface #%u: none\n", index);
+        return;
+    }
+        
     int addr_family = address->ifa_addr->sa_family;
     printf("Interface #%u:\n", index);
-    printf("    family:\t%s\n", (addr_family == AF_INET) ? "IPv4" : "IPv6");
+    printf("    family:\t%s\n", (addr_family == AF_INET) ? "IPv4" : (addr_family == AF_PACKET) ? "MAC" : "IPv6");
     printf("    name:\t%s\n", address->ifa_name);
-        
+    
     char text_address[100];
+    if (addr_family == AF_PACKET)
+    {
+        struct sockaddr_ll* mac_address = (struct sockaddr_ll*) address->ifa_addr;
+        if (mac_address->sll_halen == 6)
+            ether_ntoa_r((struct ether_addr*) &(mac_address->sll_addr), text_address);
+        printf("    host:\t%s\n", text_address);
+        return;
+    }
+    
     const int family_struct_size = (addr_family == AF_INET) ? sizeof(struct sockaddr_in) : sizeof(struct sockaddr_in6);
     
     getnameinfo(address->ifa_addr, family_struct_size, text_address, sizeof(text_address), 0, 0, NI_NUMERICHOST);
